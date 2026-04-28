@@ -1,0 +1,329 @@
+<html>
+  <head>
+    <title>The Perspectivist Data Manifesto – Valerio Basile – Computer Scientist, Semanticist</title>
+    <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta name="author" content="Valerio Basile" />
+    <meta property="og:title" content="The Perspectivist Data Manifesto" />
+    <meta property="twitter:title" content="The Perspectivist Data Manifesto" />
+    <link rel="stylesheet" type="text/css" href="./pdai.css?rnd=23" />
+  </head>
+  <body>
+<div align="center">
+Jump to:
+<a href="#further-reading">Literature</a>
+<a href="#data">Datasets</a>
+<a href="#events">Events</a>
+
+</div>
+<hr />
+<h1>The Perspectivist Data Manifesto</h1>
+
+<p>Much of modern Natural Language Processing, as well as other subfields of Artificial Intelligence, is based on some form of supervised learning. Since then the rule-based systems have been overcome by statistical models, we have seen Hidden Markov Models, Support Vector Machines, Convolutional and Recurrent Neural Networks, and more recently Transformer Networks each replacing the previous state of the art. In a way or another, all these models learn from data produced by humans, crowdsourced or otherwise. This methodology has worked well for many problems, but it is now starting to show its limits, as the rest of this document will show.</p>
+
+<h2 id="the-annotation-of-language-data">The Annotation of Language Data</h2>
+
+<p>Let us begin with a quick primer on how linguistic annotation is traditionally conducted. The basic components are the following:</p>
+<ul>
+  <li>a set of <strong>instances</strong> to annotate. These can be sentences, documents, words (in or out of context), or other linguistically meaningful units.</li>
+  <li>a target <strong>phenomenon</strong>, described in detail by means of guidelines and examples.</li>
+  <li>an annotation <strong>scheme</strong>, defining the possible values for the phenomenon to annotate, and additional rules, where applicable.</li>
+  <li>a group of <strong>annotators</strong>, selected on the basis of expertise, availability, or a mix of the two.</li>
+</ul>
+
+<p>With these premises, the act of annotating a set is an iterative process, where each annotator expresses their judgment about the target phenomenon on an instance at a time, in the modalities defined by the annotation scheme.</p>
+
+<p>In reality, often several phenomena are annotated together on the same set, whether independently or by means of strict or suggested rules to enforce constraints and dependencies between the phenomena. The instances may be grouped and therefore annotated in tuples rather than individually, in which case “an instance” has to be intended as “a tuple”. Moreover, the possible values may be categorical variables, real numbers, integers on a scale, and so on.</p>
+
+<h2 id="the-annotators">The Annotators</h2>
+
+<p>Generally speaking, there are two classes of individuals involved in an annotation process: <strong>experts</strong> and the <strong>crowd</strong>. Experts are a broad category comprising people considered competent on the phenomenon that is being annotated. However, this category has grown to include people that are not necessarily <em>experts</em> on certain phenomena by academic standards, but rather present characteristics deemed relevant to a specific annotation, such as, for instance, <a href="https://www.aclweb.org/anthology/W16-5618.pdf">victims of hate speech, or activists for social rights, in abusive language annotation</a>. Finally, experts are often simply the authors of work involving the annotation, their associates, students, or friends. That is, expert annotation is often times a matter of <strong>availability</strong> of human resources to perform the annotation task.</p>
+
+<p>Since the annotation of language data is notoriously costly, in the last decade scholars have turned more and more to <em>crowdsourcing</em> platforms, like <a href="https://www.mturk.com/">Amazon Mechanical Turk</a> or <a href="https://appen.com/">Appen</a>. Through these online platforms, a large number of annotators are available for a reasonable price*. The trade-off, when using these services, is a lesser control on the identity of the annotators, although some filters based on geography and skill can be imposed. Moreover, as the number of annotators grow, the set of instances to annotate is divided among them unpredictably, and the participation of each individual to the annotation task is typically uneven. As a result, with crowdsourcing, the question-answer matrix is sparse. Even in more controlled settings, with expert annotation, that is often the case.</p>
+
+<p>* Whether this price is fair <a href="https://www.mitpressjournals.org/doi/pdf/10.1162/COLI_a_00057">has been debated for some years</a> now.</p>
+
+<h2 id="agreement-and-harmonization">Agreement and Harmonization</h2>
+
+<p>Once a sufficient number of annotations on a sufficient number of instances is collected, they are compiled into the so-called <em>gold standard</em> dataset, for purposes such as training supervised machine learning models or benchmarking automatic prediction systems. The term <em>gold standard</em> originates in the financial domain and it has been borrowed to convey the function of the compiled dataset of serving as a reference. That is, once the gold standard dataset is created, it represents the truth against which compare future predictions on the same set of instances.</p>
+
+<p>The most straightforward procedure to compile a gold standard from a set of annotations is to apply some form of instance-wise aggregation, such as by majority vote: for each instance, the choice indicated by the relative majority of the annotators is selected as the true value for the gold standard. Depending on a series of factors including the number of annotators, this process can be more complicated, e.g, involving strategies to break the ties, or compute averages in the case of the annotation of numeric values on a scale.</p>
+
+<p>Sometimes, extra effort is put into <strong>resolving</strong> the disagreement. This is done by thoroughly discussing each disagreed-upon instance, going back to the annotation guidelines, or having an additional annotator make their judgment independently, or any combination of these methods. This phase takes the name of <strong>harmonization</strong>.</p>
+
+<p>Scrupolous researchers compute quantitative measures of <strong>inter-annotator agreement</strong> (known in some circles as <em>inter-rater agreement</em>) to track how much the annotators gave similar answers to the same questions. A number of metrics are available from the literature for this purpose. Among the most popular ones we find percent agreement (the ratio of the number of universally agreed-upon instances over the total number of instances), Cohen’s Kappa (a metric that takes into account the probability of agreeing by chance), Fleiss’ Kappa (a generalization of Cohen’s Kappa to an arbitrary number of annotators), and Krippendorff’s Alpha (a further generalization applicable to incomplete question-answer matrices). Crowdsourcing platforms implement such metrics and compute them automatically. Whatever the choice of metric, while compiling a gold standard dataset, the purpose of computing inter-rater agreement is to provide a quantitative measure of how hard the task is for the human annotator. As such, the inter-annotator agreement is also interpreted as related to the upper bound of measurable computer performance on the same task. The inter-annotator agreement is typically computed before harmonization, sometimes both before and after, in order to measure the efficacy of the harmonization itself.</p>
+
+<h2 id="issues-with-the-traditional-annotation-process">Issues with the Traditional Annotation Process</h2>
+
+<p>The current process of linguistic annotation retains a series of practices that evolved for pure linguistic annotation, i.e., the annotation of <em>objective</em>, often technical linguistic aspects of texts. Typical examples of such tasks are the annotation of parts of speech, or word senses. Once a theoretical framework is established, the unwritten assumption is made that there is <strong>exactly one truth</strong>, one true value for each variable defined in the annotation scheme for each instance to annotate. This assumption makes sense: according to the any standard grammar of English, a word in a sentence can either be a noun or a verb, or any other grammatical category, but not more than one at the same time. There is no quantum superposition in grammar, no fuzzy logic applies.</p>
+
+<p>There may be uncertainty, of course. The annotation scheme may not be sufficiently clear to all the annotators. They may have different opinions, of just make mistakes, leading to a sub-optimal agreement measure. However, any disagreement is treated as a kind of statistical noise in the data, and removed by forcing an agreement by harmonization or automatic aggregation of the annotation.</p>
+
+<p>Unfortunately, such practices start to fall apart once the focus moves to more and more abstract, latent, and pragmatic aspects of natural language. Case in point, there has been a greatly increasing number of papers in Natural Language Processing venues on datasets and tasks related to abusive language, offensive language, and hate speech. These phenomena cannot be treated with the same methodological framework as traditional linguistic annotation, for the reason that such framework does not model the hearer’s (or reader’s) <strong>perception</strong> of the communicative intent conveyed by abusive natural language expressions. The same message can be perceived as abusive by one annotator and not abusive by another annotator. In such case, I postulate that both opinions are correct, and therefore <strong>both annotations should be considered true</strong> in the gold standard. The traditional annotation process simply does not contemplate this outcome, and is therefore obsolete when applied tto highly subjective phenomena.</p>
+
+<p><em>Aggregation and harmonization destroy any personal opinion, nuance, and rich linguistic knowledge that come as a result of the different cultural and demographic background of the annotators.</em></p>
+
+<h2 id="action-points">Action Points</h2>
+
+<ol>
+  <li>
+    <p>Create and distribute <strong>non-aggregated</strong> datasets.</p>
+  </li>
+  <li>
+    <p>Avoid evaluating models against aggregated gold standards.</p>
+  </li>
+  <li>
+    <p>Mention the manifesto and put the link (http://pdai.info) in your paper on this topic.</p>
+  </li>
+  <li>
+    <p>Sign this manifesto and spread the word.</p>
+  </li>
+</ol>
+
+<p>Send an email to <a href="mailto:valerio.basile@unito.it">valerio.basile@unito.it</a> for feedback, criticism, to signal relevant reading material and tools, and most importantly, to be added to the list of people adhering to this initiative.</p>
+
+<h3>The Perspectivist Data Manifesto has been signed by:</h3>
+
+<ul>
+  <li><em>Valerio Basile, University of Turin (Italy)</em></li>
+  <li><em>Tommaso Caselli, University of Groningen (Netherlands)</em></li>
+  <li><em>Marco Guerini, Bruno Kessler Foundation (Italy)</em></li>
+  <li><em>Alessandra T. Cignarella, University of Turin (Italy)</em></li>
+  <li><em>Massimo Poesio, Queen Mary University of London (United Kingdom)</em></li>
+  <li><em>Marco A. Stranisci, University of Turin (Italy)</em></li>
+  <li><em>Manuela Sanguinetti, University of Cagliari (Italy)</em></li>
+  <li><em>Federico Cabitza, University of Milano-Bicocca (Italy)</em></li>
+  <li><em>Viviana Patti, University of Turin (Italy)</em></li>
+  <li><em>Verena Rieser, Heriot-Watt University, Edinburgh (Scotland)</em></li>
+  <li><em>Leon Derczynski, IT University of Copenhagen (Denmark)</em></li>
+  <li><em>Andrea Amelio Ravelli, Istituto di Linguistica Computazionale "Antonio Zampolli" (ILC-CNR) (Italy)</em></li>
+  <li><em>Gavin Abercrombie, Heriot-Watt University, Edinburgh (Scotland)</em></li>
+  <li><em>Sara Tonelli, Bruno Kessler Foundation (Italy)</em></li>
+  <li><em>Emiel van Miltenburg, Tilburg University (Netherlands)</em></li>
+  <li><em>Paolo Rosso, Universitat Politècnica de València (Spain)</em></li>
+  <li><em>José Camacho-Collados, Cardiff University (United Kingdom)</em></li>
+  <li><em>Shiran Dudy, University of Colorado Boulder (United States)</em></li>
+  <li><em>Liviu P. Dinu, University of Bucharest (Romania)</em></li>
+  <li><em>Marta Marchiori Manerba, University of Pisa (Italy)</em></li>
+  <li><em>Christopher M. Homan, Rochester Institute of Technology (United States)</em></li>
+  <li><em>Lucy Havens, University of Edinburgh (Scotland)</em></li>
+  <li><em>Simona Frenda, University of Turin (Italy)</em></li>
+  <li><em>Davide Ciucci, University of Milano-Bicocca (Italy)</em></li>
+  <li><em>Stella Markantonatou, Institute for Language and Speech Processing/ATHENA RC (Greece)</em></li>
+  <li><em>Michele H. Jackson, Michigan State University (United States)</em></li>
+  <li><em>Stefano De Giorgis, National Research Council (Italy)</em></li>  
+  <li><em>Claudiu Creanga, University of Bucharest (Romania)</em></li>  
+  <li><em>Filippo Contesi, University of Milan (Italy)</em></li>  
+  <li><em>Charles Welch, McMaster University (Canada)</em></li>   
+  <li><em>Fabio Celli, Maggioli (Italy)</em></li>
+  <li><em>Voula Giouli, Aristotle University of Thessaloniki (Greece)</em></li>
+  
+</ul>
+
+<hr />
+
+<h2 id="further-reading">Further Reading</h2>
+<a id="further-reading"></a>
+
+<p>Pros and cons, methods and open challenges of data perspectivism:</p>
+
+<ul>
+<li>Cabitza, F., Campagner, A., Basile, V. (2023)  <br />
+<a href="https://arxiv.org/pdf/2109.04270.pdf">Toward a Perspectivist Turn in Ground Truthing for Predictive Computing</a>  <br />
+Proceedings of the AAAI Conference on Artificial Intelligence (extended preprint on ArXiv)<br/>
+</li>
+</ul>
+
+<p>On inter-annotator agreement and its issues:</p>
+
+<ul>
+  <li>R. Artstein, M. Poesio (2008)<br />
+<a href="https://direct.mit.edu/coli/article/34/4/555/1999/Inter-Coder-Agreement-for-Computational">Inter-coder agreement for computational linguistics</a>
+Computational Linguistics</li>
+  <li>D. M. W. Powers (2012) <br />
+<a href="https://www.aclweb.org/anthology/E12-1035.pdf">The Problem with Kappa</a> <br />
+Proceedings of the 13th Conference of the European Chapter of the Association for Computational Linguistics.</li>
+  <li>A. Checco, K. Roitero, E. Maddalena, S. Mizzaro, G. Demartini (2017)<br />
+<a href="https://ojs.aaai.org/index.php/HCOMP/article/view/13306/13154">Let’s Agree to Disagree: Fixing Agreement Measures for Crowdsourcing</a><br />
+Proceedings of the AAAI Conference on Human Computation and Crowdsourcing</li>
+  <li>D. Hovy, T. Berg-Kirkpatrick, A. Vaswani, E. Hovy (2013)<br />
+<a href="https://www.aclweb.org/anthology/N13-1132.pdf">Learning Whom to Trust with MACE</a>  <br />
+Proceedings of the 2013 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies</li>
+  <li>B. Plank, D. Hovy, A. Søgaard (2014)  <br />
+<a href="https://www.aclweb.org/anthology/P14-2083.pdf">Linguistically debatable or just plain wrong?</a>  <br />
+Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics</li>
+  <li>F. Cabitza, A. Campagner, D. Albano, A. Aliprandi, A. Bruno, V. Chianca, A. Corazza, F. Di Pietto, A. Gambino, S. Gitto, C. Messina, D. Orlandi, L. Pedone, M. Zappia, L. M. Sconfienza (2020)  <br />
+<a href="https://www.mdpi.com/2076-3417/10/11/4014">The Elephant in the Machine: Proposing a New Metric of Data Reliability and its Application to a Medical Case to Assess Classification Reliability</a>  <br />
+Applied Sciences</li>
+</ul>
+
+<p>On the benefits of non-aggregation:</p>
+<ul>
+  <li>L. Aroyo, C. Welty (2015)<br />
+<a href="https://ojs.aaai.org/index.php/aimagazine/article/view/2564/2468">Truth is a lie: Crowd truth and the seven myths of human annotation</a>  <br />
+AI Magazine.</li>
+  <li>T. Liu, A. Venkatachalam, P. S. Bongale, C. M. Homan (2019)  <br />
+<a href="https://dl.acm.org/doi/10.1145/3308560.3317082">Learning to Predict Population-Level Label Distributions</a>  <br />
+Seventh AAAI Conference on Human Computation and Crowdsourcing (HCOMP-2019)</li>
+  <li>S. Akhtar, V. Basile, V. Patti (2019) <br />
+<a href="https://link.springer.com/chapter/10.1007/978-3-030-35166-3_41">A New Measure of Polarization in the Annotation of Hate Speech</a>  <br />
+18th International Conference of the Italian Association for Artificial Intelligence (AIIA 2019)</li>
+  <li>M. Klenner, A. Göhring, M. Amsler (2020) <br />
+<a href="http://ceur-ws.org/Vol-2624/paper10.pdf">Harmonization sometimes harms.</a>  <br />
+SwissText/KONVENS 2020</li>
+  <li>S. Akhtar, V. Basile, V. Patti (2020) <br />
+<a href="https://ojs.aaai.org/index.php/HCOMP/article/view/7473/7260">Modeling annotator perspective and polarized opinions to improve hate speech detection</a>  <br />
+Proceedings of the Eighth AAAI Conference on Human Computation and Crowdsourcing (HCOMP-20)</li>
+  <li>T. C. Weerasooriya, T. Liu, C. M. Homan (2020)  <br />
+<a href="http://ecai2020.eu/papers/1366_paper.pdf">Neighborhood-based Pooling for Population-level Label
+Distribution Learning</a>  <br />
+24th European Conference on Artificial Intelligence (ECAI 2020)</li>
+  <li>F. Cabitza, A. Campagner,  L. M. Sconfienza (2020)  <br />
+<a href="https://bmcmedinformdecismak.biomedcentral.com/articles/10.1186/s12911-020-01224-9">As if sand were stone. New concepts and metrics to probe the ground on which to build trustable AI</a>  <br />
+BMC Medical Informatics and Decision Making</li>
+  <!--<li>Chris J. Kennedy, Geoff Bacon, Alexander Sahn, Claudia von Vacano (2020)  <br />
+<a href="https://arxiv.org/abs/2009.10277">Constructing interval variables via faceted Rasch measurement and multitask deep learning: a hate speech application</a>  <br />
+Computational Social Science Forum</li>-->
+  <li>A. M. Davani, M. Díaz, V. Prabhakaran (2021)  <br />
+<a href="https://arxiv.org/pdf/2110.05719">Dealing with Disagreements: Looking Beyond the Majority Vote in Subjective Annotations</a>  <br />
+Transactions of the Association for Computational Linguistics (TACL)</li>
+  <li>Y. Sang, J. Stanton (2022)  <br />
+<a href="https://arxiv.org/pdf/2112.04030.pdf">The Origin and Value of Disagreement Among Data Labelers: A Case Study of the Individual Difference in Hate Speech Annotation</a>  <br />
+iConference 2022</li>
+
+</ul>
+
+<p>On evaluation:</p>
+
+<ul>
+  <li>V. Basile (2020) <br />
+<a href="http://ceur-ws.org/Vol-2776/paper-4.pdf">It’s the End of the Gold Standard as we Know it. On the Impact of Pre-aggregation on the Evaluation of Highly Subjective Tasks</a>  <br />
+Proceedings of the AIxIA 2020 Discussion Papers Workshop</li>
+  <li>V. Basile, M. Fell, T. Fornaciari, D. Hovy, S. Paun, B. Plank, M. Poesio, A. Uma (2021) <br />
+<a href="https://aclanthology.org/2021.bppf-1.3.pdf">We Need to Consider Disagreement in Evaluation.</a>  <br />
+Workshop on Benchmarking: Past, Present and Future (ACL-IJCNLP 2021)</li>
+</ul>
+
+<p>Perspectivist learning, applications of perspectivism:</p>
+
+<ul>
+  <li>L. Havens, M. Terras, B. Bach, B. Alex (2020)<br />
+<a href="https://aclanthology.org/2020.gebnlp-1.10.pdf">Situated Data, Situated Systems: A Methodology to Engage with Power Relations in Natural Language Processing Research.</a>  <br />
+Second Workshop on Gender Bias in Natural Language Processing (GeBNLP 2020)</li>
+  <li>J Romberg (2022)<br/>
+<a href="https://aclanthology.org/2022.argmining-1.11.pdf">Is Your Perspective Also My Perspective? Enriching Prediction with Subjectivity</a>  <br />
+Proceedings of the 9th Workshop on Argument Mining</li>
+  <li>J. Plepi, B. Neuendorf, L. Flek, C. Welch (2022)<br />
+<a href="https://arxiv.org/abs/2210.14531">Unifying Data Perspectivism and Personalization: An Application to Social Norms</a> <br/>
+Conference on Empirical Methods in Natural Language Processing (EMNLP 2022)</li>
+  <li>O. O. Sarumi, B. Neuendorf, J. Plepi, L. Flek, J. Schlötterer, C. Welch (2024)<br />
+<a href="https://aclanthology.org/2024.naacl-long.59.pdf">Corpus Considerations for Annotator Modeling and Scaling</a> <br/>
+ Conference of the North American Chapter of the Association for Computational Linguistics (NAACL 2024)</li>
+</ul>
+
+<hr />
+
+<h2 id="data">Non-aggregated datasets</h2>
+<a id="data"></a>
+
+<table alt="">
+<thead>
+<th>Dataset</th>
+<th>Authors</th>
+<th>Year</th>
+<th>Link</th>
+<th>Paper</th>
+<th>Description</th>
+</thead>
+<tr>
+  <td>Pejorative Language in Social Media</td>
+  <td>Liviu P. Dinu, Ioan-Bogdan Iordache, Ana Sabina Uban, Marcos Zampieri.</td>
+  <td>2021</td>
+  <td><a href="https://drive.google.com/file/d/1ArQLZCbCpb9eHudqetapCv3oN0nA5Tc_">https://drive.google.com/file/d/1ArQLZCbCpb9eHudqetapCv3oN0nA5Tc_</a></td>
+  <td><a href="https://aclanthology.org/2021.findings-emnlp.296.pdf">A Computational Exploration of Pejorative Language in Social Media.</a></td>
+  <td>Multilingual lexicon of pejorative terms for English, Spanish, Italian, and Romanian, and a dataset of tweets annotated for pejorative use.</td>
+</tr>
+<tr>
+  <td>Measuring Hate Speech</td>
+  <td>Kennedy, C. J., Bacon, G., Sahn, A., & von Vacano, C.</td>
+  <td>2020</td>
+  <td><a href="https://huggingface.co/datasets/ucberkeley-dlab/measuring-hate-speech">https://huggingface.co/datasets/ucberkeley-dlab/measuring-hate-speech</a></td>
+  <td><a href="https://arxiv.org/abs/2009.10277">Constructing interval variables via faceted Rasch measurement and multitask deep learning: a hate speech application.</a></td>
+  <td>39,565 comments annotated by 7,912 annotators, for 135,556 combined rows. Hate speech score plus 10 constituent labels. Includes 8 target identity groups and 42 identity subgroups.</td>
+</tr>
+<tr>
+  <td>Offensive Language Datasets with Annotators' Disagreement</td>
+  <td>Elisa Leonardelli, Stefano Menini, Alessio Palmero Aprosio, Marco Guerini and Sara Tonelli</td>
+  <td>2021</td>
+  <td><a href="https://github.com/dhfbk/annotators-agreement-dataset">https://github.com/dhfbk/annotators-agreement-dataset</a></td>
+  <td><a href="https://aclanthology.org/2021.emnlp-main.822.pdf">Agreeing to Disagree: Annotating Offensive Language Datasets with Annotators’ Disagreement.</a></td>
+  <td>More than 10k tweet IDs associated with 5 offensive/non-offensive labels from different annotators collected through Amazon Mechanical Turk</td>
+</tr>
+<tr>
+  <td>ConvAbuse</td>
+  <td>Amanda Cercas Curry, Gavin Abercrombie, Verena Rieser</td>
+  <td>2021</td>
+  <td><a href="https://github.com/amandacurry/convabuse">https://github.com/amandacurry/convabuse</a></td>
+  <td><a href="https://aclanthology.org/2021.emnlp-main.587.pdf">ConvAbuse: Data, Analysis, and Benchmarks for Nuanced Abuse Detection in Conversational AI</a></td>
+  <td>Abusive language in conversations between users and conversational  AI  systems</td>
+</tr>
+<tr>
+  <td>Broad Twitter Corpus</td>
+  <td>Leon Derczynski, Kalina Bontcheva, Ian Roberts</td>
+  <td>2016</td>
+  <td><a href="https://github.com/GateNLP/broad_twitter_corpus">https://github.com/GateNLP/broad_twitter_corpus</a></td>
+  <td><a href="https://aclanthology.org/C16-1111.pdf">Broad Twitter Corpus: A Diverse Named Entity Recognition Resource</a></td>
+  <td>Tweets collected over stratified times, places and social uses annotated with Named Entities</td>
+</tr>
+<tr>
+  <td>Work and Job-Related Well-Being</td>
+  <td>Tong Liu, Christopher Homan, Cecilia Ovesdotter Alm, Megan Lytle, Ann Marie White, Henry Kautz</td>
+  <td>2016</td>
+  <td><a href="https://github.com/Homan-Lab/pldl_data">https://github.com/Homan-Lab/pldl_data</a></td>
+  <td><a href="https://aclanthology.org/P16-1099.pdf">Understanding Discourse on Work and Job-Related Well-Being
+in Public Social Media</a></td>
+  <td>2,000 tweets annotated with relatedness to the job domain</td>
+</tr>
+<tr>
+  <td>Work and Job-Related Well-Being</td>
+  <td>Simona Frenda, Alessandro Pedrani, Valerio Basile, Soda Marem Lo, Alessandra Teresa Cignarella, Raffaella Panizzon, Cristina Marco, Bianca Scarlini, Viviana Patti, Cristina Bosco, Davide Bernardi</td>
+  <td>2023</td>
+  <td><a href="https://huggingface.co/datasets/Multilingual-Perspectivist-NLU/EPIC">https://huggingface.co/datasets/Multilingual-Perspectivist-NLU/EPIC</a></td>
+  <td><a href="https://aclanthology.org/2023.acl-long.774.pdf">EPIC: Multi-Perspective Annotation of a Corpus of Irony</a></td>
+  <td>3,000 pairs of short conversations (posts-replies) from Twitter and Reddit, along with the demographic information of each annotator (age, nationality, gender, and so on) annotated with irony. 14,172 individual annotations by 74 annotators.</td>
+</tr>
+<tr>
+  <td>Offensive speech</td>
+  <td>Tharindu Cyril Weerasooriya, Sujan Dutta, Tharindu Ranasinghe, Marcos Zampieri, Christopher M. Homan, Ashiqur R. KhudaBukhsh</td>
+  <td>2023</td>
+  <td><a href="https://huggingface.co/datasets/Lab-PL/voiced">https://huggingface.co/datasets/Lab-PL/voiced</a></td>
+  <td><a href="https://aclanthology.org/2023.emnlp-main.713v2.pdf">Vicarious Offense and Noise Audit of Offensive Speech Classifiers: Unifying Human and Machine Disagreement on What is Offensive</a></td>
+  <td>2,330 Youtube comments with disaggregated moderator labels and demographic information of each annotator (age, gender, race, political leaning).</td>
+</tr>
+</table>
+
+<hr />
+
+<h2 id="events">Events</h2>
+<a id="events"></a>
+
+<ul>
+    <li>
+        <a href="https://nlperspectives.di.unito.it/w/w2022/">1st Workshop on Perspectivist Approaches to NLP</a><br/>
+        Co-located with LREC 2022, Marseille (France), June 20th 2022
+    </li>
+    <li>
+        <a href="https://nlperspectives.di.unito.it/w/2nd-workshop-on-perspectivist-approaches-to-nlp/">2nd Workshop on Perspectivist Approaches to NLP</a><br/>
+        Co-located with ECAI 2023, Krakow (Poland), September 30th 2023
+    </li>
+    <li>
+        <a href="https://nlperspectives.di.unito.it/w/3rd-workshop-on-perspectivist-approaches-to-nlp/">3rd Workshop on Perspectivist Approaches to NLP</a><br/>
+        Co-located with LREC-COLING 2024, Turin (Italy), May 21th 2024
+    </li>
+    <li>
+        <a href="https://nlperspectives.di.unito.it/">4th Workshop on Perspectivist Approaches to NLP</a><br/>
+        Co-located with EMNLP 2025, Suzhou (China), November 8th 2025
+    </li>
+</ul>
+</body>
+</html>
